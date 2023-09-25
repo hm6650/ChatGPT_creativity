@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .message-container {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .user-message {
+            background-color: #fff;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #d9d9d9;
+        }
+        .message-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+        }
+        .send-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Chatbot Web Page</h1>
+    </div>
+    <div class="container">
+        <div id="message-history"></div>
+        <form id="chat-form">
+            <input type="text" id="user-input" class="message-input" placeholder="Type your message">
+            <input type="submit" value="Send" class="send-button">
+        </form>
+        <div id="chatbot-response"></div>
+    </div>
+
+    <script>
+    // Send user input and display chatbot response
+    document.getElementById('chat-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const userInput = document.getElementById('user-input').value;
+
+        // Display user message in the message history
+        const userMessageContainer = document.createElement('div');
+        userMessageContainer.className = 'message-container user-message';
+        userMessageContainer.textContent = userInput;
+        document.getElementById('message-history').appendChild(userMessageContainer);
+
+        // Send the user input as a POST request
+        fetch('/chatbot', {
+            method: 'POST',
+            body: `user_input=${encodeURIComponent(userInput)}`,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display chatbot response in the message history
+            const chatbotMessageContainer = document.createElement('div');
+            chatbotMessageContainer.className = 'message-container bot-message';
+            chatbotMessageContainer.innerHTML = data.response; // Use innerHTML to render HTML tags
+            document.getElementById('message-history').appendChild(chatbotMessageContainer);
+
+            // Clear user input
+            document.getElementById('user-input').value = '';
+        });
+    });
+</script>
+</body>
+</html>
+
